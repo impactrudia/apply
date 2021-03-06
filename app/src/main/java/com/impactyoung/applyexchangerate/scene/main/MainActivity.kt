@@ -10,10 +10,15 @@ import android.widget.TextView
 import com.impactyoung.applyexchangerate.R
 import com.impactyoung.applyexchangerate.common.CommonApplication
 import com.impactyoung.applyexchangerate.model.BaseResponse
+import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private var jsonExchangeRates: BaseResponse? = null
     private var textExchangeRate: TextView? = null
+
+    private val KOREA_EXCHANGE_RATE_INDEX = 0
+    private val JPY_EXCHANGE_RATE_INDEX = 1
+    private val PHP_EXCHANGE_RATE_INDEX = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,18 +40,36 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        var result = when (position) {
-            0 -> {
-                jsonExchangeRates?.quotes?.USDKRW.toString()
+        var exchangeRatePerNation = when (position) {
+            KOREA_EXCHANGE_RATE_INDEX -> {
+                jsonExchangeRates?.quotes?.USDKRW
             }
-            1 -> {
-                jsonExchangeRates?.quotes?.USDJPY.toString()
+            JPY_EXCHANGE_RATE_INDEX -> {
+                jsonExchangeRates?.quotes?.USDJPY
+            }
+            PHP_EXCHANGE_RATE_INDEX -> {
+                jsonExchangeRates?.quotes?.USDPHP
             }
             else -> {
-                jsonExchangeRates?.quotes?.USDPHP.toString()
+                0
             }
         }
-        textExchangeRate?.text = result
+
+        var exchangeRatesByCountriesText = resources.getStringArray(R.array.exchange_rates_by_country)
+        var result: String? = dataExtractBracket(exchangeRatesByCountriesText, position)
+
+        textExchangeRate?.text =String.format("%,.2f %s/USD", exchangeRatePerNation, result)
+    }
+
+    private fun dataExtractBracket(items: Array<String>, position: Int): String? {
+        var p = Pattern.compile("\\((.*?)\\)")
+        var m = p.matcher(items.get(position))
+
+        var result: String? = null
+        while (m.find()) {
+            result = m.group(1)
+        }
+        return result
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
