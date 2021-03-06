@@ -16,10 +16,6 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
     private var jsonExchangeRates: BaseResponse? = null
 
-    private val KRW_EXCHANGE_RATE_INDEX = 0
-    private val JPY_EXCHANGE_RATE_INDEX = 1
-    private val PHP_EXCHANGE_RATE_INDEX = 2
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -88,5 +84,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
+    }
+
+    companion object {
+        const val KRW_EXCHANGE_RATE_INDEX = 0
+        const val JPY_EXCHANGE_RATE_INDEX = 1
+        const val PHP_EXCHANGE_RATE_INDEX = 2
     }
 }
