@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ApplyExchangeRate</string>
+
+    <string name="calculate_exchange_rate">환율 계산</string>
+    <string name="remittance_country">송금국가 :</string>
+    <string name="united_states"></string>
+    <string name="recipient_country">수취국가:</string>
+    <string name="exchange_rate">환율:</string>
+    <string name="remittance_amount">송금액</string>
+    <string name="usd">USD</string>
+    <string name="submit">Submit</string>
 </resources>
