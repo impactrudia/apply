@@ -9,4 +9,10 @@
     <string name="remittance_amount">송금액</string>
     <string name="usd">USD</string>
     <string name="submit">Submit</string>
+
+    <string-array name="exchange_rates_by_country">
+        <item>한국(KRW)</item>
+        <item>일본(JPY)</item>
+        <item>필리핀(PHP)</item>
+    </string-array>
 </resources>
