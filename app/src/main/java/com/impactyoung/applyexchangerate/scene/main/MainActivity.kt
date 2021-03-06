@@ -39,16 +39,8 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         })
 
         binding.btuSubmit.setOnClickListener {
-//            mViewModel.exchangeRate.postValue(ExchangeRate())
-            var text = binding.editRemittanceAmountContent.text.toString()
-            if (text.isNullOrEmpty() || (text.toDoubleOrNull() != null && text.toDoubleOrNull()!! >= 10_000)) {
-                Toast.makeText(
-                    this@MainActivity,
-                    getString(R.string.msg_uncorrect_match),
-                    Toast.LENGTH_SHORT
-                ).show()
-                binding.textReceivableAmountResult.text = ""
-            } else {
+            var exchangeMoney = binding.editRemittanceAmountContent.text.toString()
+            if (isValidExchangeMoney(exchangeMoney)) {
                 val position = binding.spinnerRecipientCountry.selectedItemPosition
                 val dollar = binding.editRemittanceAmountContent.text.toString().toIntOrNull()
                 val exchangeRatePerNation = getExchangeRatePerNation(position)
@@ -58,6 +50,13 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     result,
                     dataExtractBracket(position)
                 )
+            } else {
+                Toast.makeText(
+                    this@MainActivity,
+                    getString(R.string.msg_uncorrect_match),
+                    Toast.LENGTH_SHORT
+                ).show()
+                binding.textReceivableAmountResult.text = ""
             }
         }
 
@@ -72,8 +71,8 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         })
     }
 
+
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        var data = getExchangeRatePerNation(position)
         binding.textExchangeRate?.text = String.format(
             getString(R.string.exchange_rate_result),
             getExchangeRatePerNation(position),
@@ -128,5 +127,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         const val KRW_EXCHANGE_RATE_INDEX = 0
         const val JPY_EXCHANGE_RATE_INDEX = 1
         const val PHP_EXCHANGE_RATE_INDEX = 2
+
+        fun isValidExchangeMoney(exchangeMoney: String): Boolean{
+            return !exchangeMoney.isNullOrEmpty() && exchangeMoney.toDoubleOrNull()!!>0 && exchangeMoney.toDoubleOrNull()!! <=10_000
+//            return exchangeMoney.isNullOrEmpty() || (!exchangeMoney.isNullOrEmpty() && (exchangeMoney.toDoubleOrNull()!!<0 || exchangeMoney.toDoubleOrNull()!! > 10000))
+        }
+
     }
 }
