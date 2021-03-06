@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val spinner: Spinner = findViewById(R.id.spinnerRecipientCountry)
         ArrayAdapter.createFromResource(
-            this, R.array.exchange_rates_by_country, android.R.layout.simple_spinner_item
+            this, R.array.exchange_rate_by_countries, android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner.adapter = adapter
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             }
         }
 
-        var exchangeRatesByCountriesText = resources.getStringArray(R.array.exchange_rates_by_country)
+        var exchangeRatesByCountriesText = resources.getStringArray(R.array.exchange_rate_by_countries)
         var result: String? = dataExtractBracket(exchangeRatesByCountriesText, position)
 
         textExchangeRate?.text =String.format("%,.2f %s/USD", exchangeRatePerNation, result)

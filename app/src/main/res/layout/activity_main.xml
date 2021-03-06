@@ -35,7 +35,7 @@
         android:layout_marginLeft="10dp"
         app:layout_constraintStart_toEndOf="@+id/labelRemittanceCountry"
         app:layout_constraintTop_toTopOf="@+id/labelRemittanceCountry"
-        android:text="미국(USD)"/>
+        android:text="@string/exchange_rate_usd"/>
 
     <TextView
         android:id="@+id/labelRecipientCountry"
@@ -55,8 +55,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         app:layout_constraintStart_toEndOf="@+id/labelRecipientCountry"
-        app:layout_constraintTop_toTopOf="@id/labelRecipientCountry"
-        tools:prompt="한국(KRW)" />
+        app:layout_constraintTop_toTopOf="@id/labelRecipientCountry"/>
 
     <TextView
         android:id="@+id/labelExchangeRate"

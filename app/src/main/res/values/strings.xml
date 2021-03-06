@@ -11,9 +11,11 @@
     <string name="submit">Submit</string>
     <string name="nation_usd">USD</string>
 
-    <string-array name="exchange_rates_by_country">
+    <string-array name="exchange_rate_by_countries">
         <item>한국(KRW)</item>
         <item>일본(JPY)</item>
         <item>필리핀(PHP)</item>
     </string-array>
+
+    <string name="exchange_rate_usd">미국(USD)</string>
 </resources>
