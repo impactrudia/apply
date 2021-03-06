@@ -48,7 +48,14 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        var exchangeRatePerNation = when (position) {
+        var exchangeRatesByCountriesText = resources.getStringArray(R.array.exchange_rate_by_countries)
+        var result: String? = dataExtractBracket(exchangeRatesByCountriesText, position)
+
+        binding.textExchangeRate?.text =String.format("%,.2f %s/USD", getExchangeRatePerNation(position), result)
+    }
+
+    private fun getExchangeRatePerNation(position: Int) : Double? {
+        return  when (position) {
             KOREA_EXCHANGE_RATE_INDEX -> {
                 jsonExchangeRates?.quotes?.USDKRW
             }
@@ -59,16 +66,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 jsonExchangeRates?.quotes?.USDPHP
             }
             else -> {
-                0
+                0.0
             }
         }
-
-        var exchangeRatesByCountriesText = resources.getStringArray(R.array.exchange_rate_by_countries)
-        var result: String? = dataExtractBracket(exchangeRatesByCountriesText, position)
-
-        binding.textExchangeRate?.text =String.format("%,.2f %s/USD", exchangeRatePerNation, result)
     }
-
+    
     private fun dataExtractBracket(items: Array<String>, position: Int): String? {
         var p = Pattern.compile("\\((.*?)\\)")
         var m = p.matcher(items.get(position))
