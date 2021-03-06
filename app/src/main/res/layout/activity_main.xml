@@ -5,6 +5,9 @@
 
     <data>
         <import type="android.view.View" />
+        <variable
+            type="com.impactyoung.applyexchangerate.scene.main.BaseViewModel"
+            name="viewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,7 +73,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/exchange_rate"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerRecipientCountry" />
+            app:layout_constraintTop_toBottomOf="@id/spinnerRecipientCountry" />
 
         <TextView
             android:id="@+id/textExchangeRate"

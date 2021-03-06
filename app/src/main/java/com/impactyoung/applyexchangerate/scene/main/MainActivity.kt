@@ -6,25 +6,24 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.impactyoung.applyexchangerate.R
-import com.impactyoung.applyexchangerate.common.CommonApplication
 import com.impactyoung.applyexchangerate.databinding.ActivityMainBinding
-import com.impactyoung.applyexchangerate.model.BaseResponse
+import com.impactyoung.applyexchangerate.network.CommonRepository
 import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
-    private var jsonExchangeRates: BaseResponse? = null
+    private val mViewModel: BaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         binding.lifecycleOwner = this
+        binding.viewModel = mViewModel
+        setContentView(binding.root)
 
-        CommonApplication.instance?.let {
-            jsonExchangeRates = it.exchangeRateApply
-        }
+        CommonRepository.getInstance().initApis()
 
         ArrayAdapter.createFromResource(
             this, R.array.exchange_rate_by_countries, android.R.layout.simple_spinner_item
@@ -33,37 +32,66 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             binding.spinnerRecipientCountry.adapter = adapter
         }
         binding.spinnerRecipientCountry.onItemSelectedListener = this
-        binding.spinnerRecipientCountry.setSelection(0)
+        mViewModel.exchangeRate.observe(this, {
+            if (it != null) {
+                binding.spinnerRecipientCountry.setSelection(0)
+            }
+        })
 
         binding.btuSubmit.setOnClickListener {
+//            mViewModel.exchangeRate.postValue(ExchangeRate())
             var text = binding.editRemittanceAmountContent.text.toString()
-            if(text.isNullOrEmpty() || (text.toDoubleOrNull() != null && text.toDoubleOrNull()!! >= 10_000)){
-                Toast.makeText(this@MainActivity, getString(R.string.msg_uncorrect_match), Toast.LENGTH_SHORT).show()
+            if (text.isNullOrEmpty() || (text.toDoubleOrNull() != null && text.toDoubleOrNull()!! >= 10_000)) {
+                Toast.makeText(
+                    this@MainActivity,
+                    getString(R.string.msg_uncorrect_match),
+                    Toast.LENGTH_SHORT
+                ).show()
                 binding.textReceivableAmountResult.text = ""
-            }else{
+            } else {
                 val position = binding.spinnerRecipientCountry.selectedItemPosition
                 val dollar = binding.editRemittanceAmountContent.text.toString().toIntOrNull()
                 val exchangeRatePerNation = getExchangeRatePerNation(position)
                 val result = exchangeRatePerNation?.let { it1 -> dollar?.times(it1) }
-                binding.textReceivableAmountResult.text = String.format(getString(R.string.msg_exchange_rate_calculation_result), result, dataExtractBracket(position))
+                binding.textReceivableAmountResult.text = String.format(
+                    getString(R.string.msg_exchange_rate_calculation_result),
+                    result,
+                    dataExtractBracket(position)
+                )
             }
         }
+
+        mViewModel.getAppVersion({
+            mViewModel.exchangeRate.postValue(it)
+        }, {
+            Toast.makeText(
+                this@MainActivity,
+                getString(R.string.msg_network_error),
+                Toast.LENGTH_SHORT
+            ).show()
+        })
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        binding.textExchangeRate?.text =String.format(getString(R.string.exchange_rate_result), getExchangeRatePerNation(position), dataExtractBracket(position))
+        var data = getExchangeRatePerNation(position)
+        binding.textExchangeRate?.text = String.format(
+            getString(R.string.exchange_rate_result),
+            getExchangeRatePerNation(position),
+            dataExtractBracket(position)
+        )
     }
 
-    private fun getExchangeRatePerNation(position: Int) : Double? {
-        return  when (position) {
+    private fun getExchangeRatePerNation(position: Int): Double? {
+        var exchangeRateValue = mViewModel.exchangeRate.value
+        return when (position) {
             KRW_EXCHANGE_RATE_INDEX -> {
-                jsonExchangeRates?.quotes?.USDKRW
+                exchangeRateValue?.USDKRW ?: 0.0
             }
             JPY_EXCHANGE_RATE_INDEX -> {
-                jsonExchangeRates?.quotes?.USDJPY
+                exchangeRateValue?.USDJPY ?: 0.0
             }
             PHP_EXCHANGE_RATE_INDEX -> {
-                jsonExchangeRates?.quotes?.USDPHP
+                exchangeRateValue?.USDPHP ?: 0.0
             }
             else -> {
                 0.0
@@ -84,6 +112,16 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mViewModel.clearOnPauseDisposable()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mViewModel.disposeAllDisposable()
     }
 
     companion object {

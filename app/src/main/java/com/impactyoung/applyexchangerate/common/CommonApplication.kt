@@ -1,10 +1,10 @@
 package com.impactyoung.applyexchangerate.common
 
-import android.app.Application
+import androidx.multidex.MultiDexApplication
 import com.google.gson.Gson
 import com.impactyoung.applyexchangerate.model.BaseResponse
 
-class CommonApplication: Application() {
+class CommonApplication: MultiDexApplication() {
     companion object{
         var instance : CommonApplication?= null
     }
