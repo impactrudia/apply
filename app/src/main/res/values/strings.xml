@@ -19,4 +19,6 @@
 
     <string name="exchange_rate_usd">미국(USD)</string>
     <string name="msg_uncorrect_match">송금액이 바르지 않습니다</string>
+    <string name="msg_exchange_rate_calculation_result">수취금액은 %,.2f %s 입니다.</string>
+    <string name="exchange_rate_result">%,.2f %s/USD</string>
 </resources>

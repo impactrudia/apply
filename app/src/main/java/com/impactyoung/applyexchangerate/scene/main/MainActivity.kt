@@ -43,15 +43,19 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             var text = binding.editRemittanceAmountContent.text.toString()
             if(text.isNullOrEmpty() || (text.toDoubleOrNull() != null && text.toDoubleOrNull()!! >= 10_000)){
                 Toast.makeText(this@MainActivity, getString(R.string.msg_uncorrect_match), Toast.LENGTH_SHORT).show()
+                binding.textReceivableAmountResult.text = ""
+            }else{
+                val position = binding.spinnerRecipientCountry.selectedItemPosition
+                var doller = binding.editRemittanceAmountContent.text.toString().toIntOrNull()
+                var exchangeRatePerNation = getExchangeRatePerNation(position)
+                var result = exchangeRatePerNation?.let { it1 -> doller?.times(it1) }
+                binding.textReceivableAmountResult.text = String.format(getString(R.string.msg_exchange_rate_calculation_result), result, dataExtractBracket(position))
             }
         }
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        var exchangeRatesByCountriesText = resources.getStringArray(R.array.exchange_rate_by_countries)
-        var result: String? = dataExtractBracket(exchangeRatesByCountriesText, position)
-
-        binding.textExchangeRate?.text =String.format("%,.2f %s/USD", getExchangeRatePerNation(position), result)
+        binding.textExchangeRate?.text =String.format(getString(R.string.exchange_rate_result), getExchangeRatePerNation(position), dataExtractBracket(position))
     }
 
     private fun getExchangeRatePerNation(position: Int) : Double? {
@@ -70,8 +74,9 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             }
         }
     }
-    
-    private fun dataExtractBracket(items: Array<String>, position: Int): String? {
+
+    private fun dataExtractBracket(position: Int): String? {
+        var items = resources.getStringArray(R.array.exchange_rate_by_countries)
         var p = Pattern.compile("\\((.*?)\\)")
         var m = p.matcher(items.get(position))
 
