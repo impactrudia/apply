@@ -9,12 +9,13 @@ import android.widget.Spinner
 import android.widget.TextView
 import com.impactyoung.applyexchangerate.R
 import com.impactyoung.applyexchangerate.common.CommonApplication
+import com.impactyoung.applyexchangerate.databinding.ActivityMainBinding
 import com.impactyoung.applyexchangerate.model.BaseResponse
 import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+    private lateinit var binding: ActivityMainBinding
     private var jsonExchangeRates: BaseResponse? = null
-    private var textExchangeRate: TextView? = null
 
     private val KOREA_EXCHANGE_RATE_INDEX = 0
     private val JPY_EXCHANGE_RATE_INDEX = 1
@@ -22,21 +23,22 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.lifecycleOwner = this
+
         CommonApplication.instance?.let {
             jsonExchangeRates = it.exchangeRateApply
         }
-        textExchangeRate = findViewById(R.id.textExchangeRate)
 
-        val spinner: Spinner = findViewById(R.id.spinnerRecipientCountry)
         ArrayAdapter.createFromResource(
             this, R.array.exchange_rate_by_countries, android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
+            binding.spinnerRecipientCountry.adapter = adapter
         }
-        spinner.onItemSelectedListener = this
-        spinner.setSelection(0)
+        binding.spinnerRecipientCountry.onItemSelectedListener = this
+        binding.spinnerRecipientCountry.setSelection(0)
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         var exchangeRatesByCountriesText = resources.getStringArray(R.array.exchange_rate_by_countries)
         var result: String? = dataExtractBracket(exchangeRatesByCountriesText, position)
 
-        textExchangeRate?.text =String.format("%,.2f %s/USD", exchangeRatePerNation, result)
+        binding.textExchangeRate?.text =String.format("%,.2f %s/USD", exchangeRatePerNation, result)
     }
 
     private fun dataExtractBracket(items: Array<String>, position: Int): String? {
