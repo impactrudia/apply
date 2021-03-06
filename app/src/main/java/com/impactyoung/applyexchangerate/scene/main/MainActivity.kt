@@ -5,8 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.Toast
 import com.impactyoung.applyexchangerate.R
 import com.impactyoung.applyexchangerate.common.CommonApplication
 import com.impactyoung.applyexchangerate.databinding.ActivityMainBinding
@@ -39,6 +38,13 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
         binding.spinnerRecipientCountry.onItemSelectedListener = this
         binding.spinnerRecipientCountry.setSelection(0)
+
+        binding.btuSubmit.setOnClickListener {
+            var text = binding.editRemittanceAmountContent.text.toString()
+            if(text.isNullOrEmpty() || (text.toDoubleOrNull() != null && text.toDoubleOrNull()!! >= 10_000)){
+                Toast.makeText(this@MainActivity, getString(R.string.msg_uncorrect_match), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {

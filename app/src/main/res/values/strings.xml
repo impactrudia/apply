@@ -18,4 +18,5 @@
     </string-array>
 
     <string name="exchange_rate_usd">미국(USD)</string>
+    <string name="msg_uncorrect_match">송금액이 바르지 않습니다</string>
 </resources>
