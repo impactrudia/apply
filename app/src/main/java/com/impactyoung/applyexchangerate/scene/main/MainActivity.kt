@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
     private var jsonExchangeRates: BaseResponse? = null
 
-    private val KOREA_EXCHANGE_RATE_INDEX = 0
+    private val KRW_EXCHANGE_RATE_INDEX = 0
     private val JPY_EXCHANGE_RATE_INDEX = 1
     private val PHP_EXCHANGE_RATE_INDEX = 2
 
@@ -46,9 +46,9 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 binding.textReceivableAmountResult.text = ""
             }else{
                 val position = binding.spinnerRecipientCountry.selectedItemPosition
-                var doller = binding.editRemittanceAmountContent.text.toString().toIntOrNull()
-                var exchangeRatePerNation = getExchangeRatePerNation(position)
-                var result = exchangeRatePerNation?.let { it1 -> doller?.times(it1) }
+                val dollar = binding.editRemittanceAmountContent.text.toString().toIntOrNull()
+                val exchangeRatePerNation = getExchangeRatePerNation(position)
+                val result = exchangeRatePerNation?.let { it1 -> dollar?.times(it1) }
                 binding.textReceivableAmountResult.text = String.format(getString(R.string.msg_exchange_rate_calculation_result), result, dataExtractBracket(position))
             }
         }
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private fun getExchangeRatePerNation(position: Int) : Double? {
         return  when (position) {
-            KOREA_EXCHANGE_RATE_INDEX -> {
+            KRW_EXCHANGE_RATE_INDEX -> {
                 jsonExchangeRates?.quotes?.USDKRW
             }
             JPY_EXCHANGE_RATE_INDEX -> {
